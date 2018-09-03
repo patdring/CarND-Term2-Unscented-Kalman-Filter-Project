@@ -71,8 +71,8 @@ UKF::UKF() {
   lambda_ = 3 - n_aug_;
   
   P_ = MatrixXd(n_x_, n_x_);
-  P_ <<     1,    0,    0,     0,     0,
-            0,    1,    0,     0,     0,
+  P_ <<     0.5,    0,    0,     0,     0,
+            0,    0.5,    0,     0,     0,
             0,    0,    1,     0,     0,
             0,    0,    0,     1,     0,
             0,    0,    0,     0,     1;
@@ -114,7 +114,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
         */
         float rho = meas_package.raw_measurements_[0];
         float phi = meas_package.raw_measurements_[1];
-        float rho_dot = meas_package.raw_measurements_[2];
+        //float rho_dot = meas_package.raw_measurements_[2];
 
         float px = rho * cos(phi);
         float py = rho * sin(phi);
@@ -354,7 +354,7 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
 
   //calculate NIS
   NIS_laser_ = z_diff.transpose() * S.inverse() * z_diff;
-
+  cout << "NIS_laser_: " << NIS_laser_  << endl;
   //update state mean and covariance matrix
   x_ = x_ + K * z_diff;
   P_ = P_ - K*S*K.transpose();
@@ -460,7 +460,8 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
 
   //calculate NIS
   NIS_radar_ = z_diff.transpose() * S.inverse() * z_diff;
-
+  cout << "NIS_radar_: " << NIS_radar_  << endl;
+  
   //update state mean and covariance matrix
   x_ = x_ + K * z_diff;
   P_ = P_ - K*S*K.transpose();
